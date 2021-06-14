@@ -73,15 +73,30 @@ bool peLoader(const char *exePath, const wchar_t* cmdline)
 
 int main(int argc, char **argv)
 {
-	if (argc != 2)
+	if (argc < 2)
 	{
 		printf("Usage: %s [Exe Path]", strrchr(argv[0], '\\') ? strrchr(argv[0], '\\') + 1 : argv[0]);
 		getchar();
 		return 0;
 	}
 
-	peLoader(argv[1], NULL);
-	getchar();
+	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+	
+	string cmd = "";
+	for (int i = 1; i < argc; i++)
+	{
+		if (i > 1)
+			cmd += (string)" ";
+		cmd += (string)argv[i];
+	}
+
+	std::wstring wStrCmd = converter.from_bytes(cmd);
+	std::wcout << "Running: " << wStrCmd << "...\n";
+
+	const wchar_t* wCharTCmd = wStrCmd.c_str();
+
+	peLoader(argv[1], wCharTCmd);
     return 0;
 }
+
 
